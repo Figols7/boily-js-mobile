@@ -1,0 +1,7 @@
+{
+  "name": "boily-js-mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

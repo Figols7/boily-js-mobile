@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Sign In</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="login-container">
+    <div class="logo-section">
+      <ion-icon name="rocket-outline" size="large" color="primary"></ion-icon>
+      <h1>BoilyJS</h1>
+      <p>Welcome back! Sign in to continue.</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <ion-list lines="none">
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            inputmode="email">
+          </ion-input>
+        </ion-item>
+        <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          <small *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</small>
+          <small *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email</small>
+        </div>
+
+        <ion-item>
+          <ion-label position="stacked">Password</ion-label>
+          <ion-input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Enter your password"
+            autocomplete="current-password">
+          </ion-input>
+          <ion-button
+            fill="clear"
+            slot="end"
+            (click)="togglePasswordVisibility()"
+            size="small">
+            <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <small *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</small>
+          <small *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</small>
+        </div>
+      </ion-list>
+
+      <div class="form-actions">
+        <ion-button
+          expand="block"
+          type="submit"
+          [disabled]="loginForm.invalid || isLoading"
+          strong="true">
+          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          Sign In
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          (click)="loginWithGoogle()"
+          class="google-btn">
+          <ion-icon name="logo-google" slot="start"></ion-icon>
+          Continue with Google
+        </ion-button>
+      </div>
+    </form>
+
+    <div class="additional-links">
+      <p>Don't have an account?</p>
+      <ion-button fill="clear" (click)="navigateToRegister()">
+        Sign Up
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
