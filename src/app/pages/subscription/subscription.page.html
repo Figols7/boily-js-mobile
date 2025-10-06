@@ -1,0 +1,159 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Suscripción Premium</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Current subscription status -->
+  <div class="subscription-status" *ngIf="currentSubscription">
+    <ion-card color="success">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="checkmark-circle" color="light"></ion-icon>
+          Suscripción Activa
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Plan:</strong> {{currentSubscription.planType}}</p>
+        <p><strong>Expira:</strong> {{currentSubscription.currentPeriodEnd | date:'medium'}}</p>
+
+        <ion-button
+          fill="outline"
+          color="light"
+          (click)="manageSubscription()"
+          class="manage-btn">
+          <ion-icon name="settings-outline" slot="start"></ion-icon>
+          Gestionar Suscripción
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Free user - Show upgrade options -->
+  <div class="upgrade-section" *ngIf="!currentSubscription">
+    <div class="upgrade-header">
+      <ion-icon name="star" color="warning" size="large"></ion-icon>
+      <h2>Actualiza a Premium</h2>
+      <p>Accede a todas las subvenciones disponibles con notificaciones en tiempo real</p>
+    </div>
+
+    <!-- Subscription tiers -->
+    <div class="subscription-tiers">
+      <ion-card
+        *ngFor="let tier of subscriptionTiers"
+        class="tier-card"
+        [class.recommended]="tier.id.includes('yearly')">
+
+        <ion-badge
+          color="secondary"
+          class="recommended-badge"
+          *ngIf="tier.id.includes('yearly')">
+          ¡Más Popular!
+        </ion-badge>
+
+        <ion-card-header>
+          <ion-card-title>{{tier.name}}</ion-card-title>
+          <div class="price">
+            <span class="amount">{{tier.price}}</span>
+            <span class="period">/{{tier.duration}}</span>
+          </div>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item *ngFor="let feature of tier.features">
+              <ion-icon
+                [name]="getFeatureIcon(feature)"
+                color="success"
+                slot="start">
+              </ion-icon>
+              <ion-label>{{feature}}</ion-label>
+            </ion-item>
+          </ion-list>
+
+          <ion-button
+            expand="block"
+            (click)="purchaseSubscription(tier)"
+            class="subscribe-btn">
+            <ion-icon name="card" slot="start"></ion-icon>
+            Suscribirse
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+
+  <!-- Restore purchases button -->
+  <div class="restore-section">
+    <ion-button
+      fill="clear"
+      color="medium"
+      (click)="restorePurchases()">
+      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+      Restaurar compras
+    </ion-button>
+  </div>
+
+  <!-- Benefits section -->
+  <div class="benefits-section">
+    <h3>¿Por qué actualizar?</h3>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="6">
+          <div class="benefit-item">
+            <ion-icon name="notifications" color="primary"></ion-icon>
+            <div>
+              <h4>Notificaciones Ilimitadas</h4>
+              <p>Recibe alertas de todas las subvenciones disponibles</p>
+            </div>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <div class="benefit-item">
+            <ion-icon name="flash" color="warning"></ion-icon>
+            <div>
+              <h4>Tiempo Real</h4>
+              <p>Sé el primero en conocer nuevas oportunidades</p>
+            </div>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <div class="benefit-item">
+            <ion-icon name="funnel" color="secondary"></ion-icon>
+            <div>
+              <h4>Filtros Avanzados</h4>
+              <p>Personaliza qué tipo de subvenciones quieres recibir</p>
+            </div>
+          </div>
+        </ion-col>
+
+        <ion-col size="12" size-md="6">
+          <div class="benefit-item">
+            <ion-icon name="analytics" color="success"></ion-icon>
+            <div>
+              <h4>Análisis y Tendencias</h4>
+              <p>Insights sobre patrones de financiación</p>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Terms and privacy -->
+  <div class="legal-section">
+    <p class="legal-text">
+      Al suscribirte, aceptas nuestros
+      <a href="#" (click)="openTerms()">Términos de Servicio</a> y
+      <a href="#" (click)="openPrivacy()">Política de Privacidad</a>.
+      La suscripción se renovará automáticamente.
+    </p>
+  </div>
+</ion-content>
