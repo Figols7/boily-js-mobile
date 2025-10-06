@@ -1,0 +1,168 @@
+.register-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.logo-section {
+  text-align: center;
+  margin-bottom: 32px;
+  margin-top: 20px;
+
+  .app-icon {
+    font-size: 64px;
+    color: var(--ion-color-primary);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: var(--ion-color-primary);
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 4px;
+
+  &.ion-invalid {
+    --border-color: var(--ion-color-danger);
+  }
+}
+
+.error-message {
+  display: block;
+  padding: 4px 0 12px 0;
+  font-size: 12px;
+}
+
+.password-strength {
+  padding: 8px 0 16px 0;
+
+  ion-text {
+    font-size: 12px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  ion-progress-bar {
+    height: 4px;
+    border-radius: 2px;
+  }
+}
+
+.terms-item {
+  margin: 16px 0;
+
+  ion-label {
+    font-size: 13px;
+    margin-left: 12px;
+  }
+
+  .terms-link {
+    color: var(--ion-color-primary);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.register-button {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  height: 48px;
+  font-weight: 600;
+  text-transform: none;
+  font-size: 16px;
+}
+
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background-color: var(--ion-color-light);
+  }
+
+  &::before {
+    left: 0;
+  }
+
+  &::after {
+    right: 0;
+  }
+
+  ion-text {
+    background-color: var(--ion-background-color);
+    padding: 0 16px;
+    font-size: 14px;
+  }
+}
+
+.google-button {
+  height: 48px;
+  font-weight: 500;
+  text-transform: none;
+  font-size: 15px;
+  margin-bottom: 24px;
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 14px;
+
+  .link-text {
+    color: var(--ion-color-primary);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .register-container {
+    padding: 10px 0;
+  }
+
+  .logo-section {
+    margin-bottom: 24px;
+    margin-top: 10px;
+
+    .app-icon {
+      font-size: 48px;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+  }
+}
