@@ -114,6 +114,33 @@ export class RegisterPage implements OnInit {
     }
   }
 
+  async loginWithApple() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Connecting to Apple...',
+      spinner: 'crescent'
+    });
+    await loading.present();
+
+    try {
+      await this.authService.loginWithApple();
+      await loading.dismiss();
+    } catch (error: any) {
+      await loading.dismiss();
+
+      // Don't show error if user cancelled
+      if (error.message?.includes('cancelled')) {
+        return;
+      }
+
+      const alert = await this.alertCtrl.create({
+        header: 'Error',
+        message: error.message || 'Unable to connect with Apple. Please try again.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
+  }
+
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }

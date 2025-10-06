@@ -5,6 +5,7 @@ import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { Platform } from '@ionic/angular';
+import { SignInWithApple, SignInWithAppleResponse, SignInWithAppleOptions } from '@capacitor-community/apple-sign-in';
 import {
   User,
   AuthResponse,
@@ -135,6 +136,63 @@ export class AuthService {
         this.isAuthenticatedSignal.set(true);
       })
     );
+  }
+
+  // Apple Sign-In - Native iOS
+  async loginWithApple(): Promise<void> {
+    if (!this.platform.is('capacitor')) {
+      // Web fallback - redirect to backend
+      window.location.href = `${this.API_URL}/auth/apple`;
+      return;
+    }
+
+    try {
+      const options: SignInWithAppleOptions = {
+        clientId: 'com.boilyjs.app', // Replace with your actual bundle ID
+        redirectURI: 'https://your-domain.com/auth/apple/callback', // Replace with your domain
+        scopes: 'email name',
+        state: Math.random().toString(36).substring(2, 15),
+        nonce: Math.random().toString(36).substring(2, 15)
+      };
+
+      const response: SignInWithAppleResponse = await SignInWithApple.authorize(options);
+
+      // Send Apple credentials to backend for verification
+      await this.handleAppleSignIn(response);
+    } catch (error: any) {
+      console.error('Apple Sign-In failed:', error);
+      if (error.code === '1001') {
+        // User cancelled
+        throw new Error('Apple Sign-In was cancelled');
+      }
+      throw new Error('Apple Sign-In failed. Please try again.');
+    }
+  }
+
+  private async handleAppleSignIn(response: SignInWithAppleResponse): Promise<void> {
+    try {
+      // Send Apple credentials to your backend for verification
+      const authResponse = await this.http.post<AuthResponse>(
+        `${this.API_URL}/auth/apple`,
+        {
+          identityToken: response.response.identityToken,
+          authorizationCode: response.response.authorizationCode,
+          user: response.response.user ? {
+            email: response.response.email,
+            givenName: response.response.givenName,
+            familyName: response.response.familyName
+          } : null
+        }
+      ).toPromise();
+
+      if (authResponse) {
+        await this.setAuthData(authResponse);
+        await this.router.navigate(['/dashboard']);
+      }
+    } catch (error) {
+      console.error('Failed to authenticate with Apple:', error);
+      throw new Error('Failed to authenticate with Apple. Please try again.');
+    }
   }
 
   // User Data Methods
