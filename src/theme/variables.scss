@@ -1,2 +1,114 @@
 // For information on how to create your own theme, please see:
 // http://ionicframework.com/docs/theming/
+
+/**
+ * BoilyJS Mobile Theme - Red Theme
+ * Matches the web app theme for consistency
+ */
+
+:root {
+  /* ===== PRIMARY BRAND COLORS (Red Theme) ===== */
+  --ion-color-primary: #ef4444;
+  --ion-color-primary-rgb: 239, 68, 68;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #dc2626;
+  --ion-color-primary-tint: #f87171;
+
+  /* ===== SECONDARY COLORS (Orange) ===== */
+  --ion-color-secondary: #f97316;
+  --ion-color-secondary-rgb: 249, 115, 22;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #ea580c;
+  --ion-color-secondary-tint: #fb923c;
+
+  /* ===== TERTIARY COLORS ===== */
+  --ion-color-tertiary: #fb923c;
+  --ion-color-tertiary-rgb: 251, 146, 60;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #f97316;
+  --ion-color-tertiary-tint: #fdba74;
+
+  /* ===== SUCCESS COLOR ===== */
+  --ion-color-success: #10b981;
+  --ion-color-success-rgb: 16, 185, 129;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #059669;
+  --ion-color-success-tint: #34d399;
+
+  /* ===== WARNING COLOR ===== */
+  --ion-color-warning: #f59e0b;
+  --ion-color-warning-rgb: 245, 158, 11;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #d97706;
+  --ion-color-warning-tint: #fbbf24;
+
+  /* ===== DANGER COLOR ===== */
+  --ion-color-danger: #ef4444;
+  --ion-color-danger-rgb: 239, 68, 68;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #dc2626;
+  --ion-color-danger-tint: #f87171;
+
+  /* ===== DARK COLOR ===== */
+  --ion-color-dark: #1f2937;
+  --ion-color-dark-rgb: 31, 41, 55;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #111827;
+  --ion-color-dark-tint: #374151;
+
+  /* ===== MEDIUM COLOR ===== */
+  --ion-color-medium: #6b7280;
+  --ion-color-medium-rgb: 107, 114, 128;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #4b5563;
+  --ion-color-medium-tint: #9ca3af;
+
+  /* ===== LIGHT COLOR ===== */
+  --ion-color-light: #f9fafb;
+  --ion-color-light-rgb: 249, 250, 251;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #f3f4f6;
+  --ion-color-light-tint: #ffffff;
+
+  /* ===== CUSTOM CSS VARIABLES (same as web) ===== */
+  --gradient-start: #ef4444;
+  --gradient-end: #b91c1c;
+  --gradient-light-start: #fca5a5;
+  --gradient-light-end: #ef4444;
+
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+
+  --bg-white: #ffffff;
+  --bg-light: #f9fafb;
+  --bg-medium: #f3f4f6;
+
+  --border-color: #e5e7eb;
+  --divider-color: #d1d5db;
+}
+
+/* ===== GRADIENT UTILITY CLASSES ===== */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+}
+
+.gradient-light {
+  background: linear-gradient(135deg, var(--gradient-light-start) 0%, var(--gradient-light-end) 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
