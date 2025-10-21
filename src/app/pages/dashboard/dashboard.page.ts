@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, LoadingController } from '@ionic/angular';
@@ -16,6 +16,12 @@ import { Subscription } from 'rxjs';
   imports: [CommonModule, IonicModule, FormsModule]
 })
 export class DashboardPage implements OnInit, OnDestroy {
+  private authService = inject(AuthService);
+  public subscriptionService = inject(SubscriptionService);
+  private router = inject(Router);
+  private alertCtrl = inject(AlertController);
+  private loadingCtrl = inject(LoadingController);
+
   // Signals from services
   currentUser = this.authService.currentUser;
   subscription = this.subscriptionService.subscription;
@@ -34,14 +40,6 @@ export class DashboardPage implements OnInit, OnDestroy {
   // Enums for template
   SubscriptionStatus = SubscriptionStatus;
   PlanType = PlanType;
-
-  constructor(
-    private authService: AuthService,
-    public subscriptionService: SubscriptionService,
-    private router: Router,
-    private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
-  ) {}
 
   async ngOnInit() {
     await this.loadDashboardData();

@@ -1,9 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonicModule, LoadingController, AlertController, Platform } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
+
+interface LoginForm {
+  email: FormControl<string>;
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'app-login',
@@ -13,21 +18,21 @@ import { AuthService } from '../../services/auth.service';
   imports: [CommonModule, IonicModule, ReactiveFormsModule]
 })
 export class LoginPage implements OnInit {
-  loginForm: FormGroup;
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private loadingCtrl = inject(LoadingController);
+  private alertCtrl = inject(AlertController);
+  private platform = inject(Platform);
+
+  loginForm: FormGroup<LoginForm>;
   showPassword = false;
   isLoading = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController,
-    private platform: Platform
-  ) {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+  constructor() {
+    this.loginForm = this.fb.group<LoginForm>({
+      email: new FormControl('', { validators: [Validators.required, Validators.email], nonNullable: true }),
+      password: new FormControl('', { validators: [Validators.required, Validators.minLength(6)], nonNullable: true })
     });
   }
 
@@ -50,7 +55,7 @@ export class LoginPage implements OnInit {
     });
     await loading.present();
 
-    this.authService.login(this.loginForm.value).subscribe({
+    this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: async (response) => {
         await loading.dismiss();
         this.router.navigate(['/dashboard']);

@@ -27,9 +27,11 @@
           placeholder="Enter your first name"
         ></ion-input>
       </ion-item>
-      <ion-note color="danger" *ngIf="firstNameErrors" class="error-message">
-        {{ firstNameErrors }}
-      </ion-note>
+      @if (firstNameErrors) {
+        <ion-note color="danger" class="error-message">
+          {{ firstNameErrors }}
+        </ion-note>
+      }
 
       <!-- Last Name -->
       <ion-item lines="full" [class.ion-invalid]="lastNameErrors">
@@ -40,9 +42,11 @@
           placeholder="Enter your last name"
         ></ion-input>
       </ion-item>
-      <ion-note color="danger" *ngIf="lastNameErrors" class="error-message">
-        {{ lastNameErrors }}
-      </ion-note>
+      @if (lastNameErrors) {
+        <ion-note color="danger" class="error-message">
+          {{ lastNameErrors }}
+        </ion-note>
+      }
 
       <!-- Email -->
       <ion-item lines="full" [class.ion-invalid]="emailErrors">
@@ -54,9 +58,11 @@
           autocomplete="email"
         ></ion-input>
       </ion-item>
-      <ion-note color="danger" *ngIf="emailErrors" class="error-message">
-        {{ emailErrors }}
-      </ion-note>
+      @if (emailErrors) {
+        <ion-note color="danger" class="error-message">
+          {{ emailErrors }}
+        </ion-note>
+      }
 
       <!-- Password -->
       <ion-item lines="full" [class.ion-invalid]="passwordErrors">
@@ -79,12 +85,15 @@
           ></ion-icon>
         </ion-button>
       </ion-item>
-      <ion-note color="danger" *ngIf="passwordErrors" class="error-message">
-        {{ passwordErrors }}
-      </ion-note>
+      @if (passwordErrors) {
+        <ion-note color="danger" class="error-message">
+          {{ passwordErrors }}
+        </ion-note>
+      }
 
       <!-- Password Strength Indicator -->
-      <div class="password-strength" *ngIf="registerForm.get('password')?.value">
+      @if (registerForm.get('password')?.value) {
+      <div class="password-strength">
         <ion-text [color]="getPasswordStrengthColor()">
           Password Strength: <strong>{{ getPasswordStrengthText() }}</strong>
         </ion-text>
@@ -93,6 +102,7 @@
           [color]="getPasswordStrengthColor()"
         ></ion-progress-bar>
       </div>
+      }
 
       <!-- Confirm Password -->
       <ion-item lines="full" [class.ion-invalid]="confirmPasswordErrors">
@@ -115,9 +125,11 @@
           ></ion-icon>
         </ion-button>
       </ion-item>
-      <ion-note color="danger" *ngIf="confirmPasswordErrors" class="error-message">
-        {{ confirmPasswordErrors }}
-      </ion-note>
+      @if (confirmPasswordErrors) {
+        <ion-note color="danger" class="error-message">
+          {{ confirmPasswordErrors }}
+        </ion-note>
+      }
 
       <!-- Terms and Conditions -->
       <ion-item lines="none" class="terms-item">
@@ -131,13 +143,14 @@
           <a href="#" class="terms-link">Privacy Policy</a>
         </ion-label>
       </ion-item>
-      <ion-note
-        color="danger"
-        *ngIf="registerForm.get('termsAccepted')?.touched && registerForm.get('termsAccepted')?.errors"
-        class="error-message"
-      >
-        You must accept the terms and conditions
-      </ion-note>
+      @if (registerForm.get('termsAccepted')?.touched && registerForm.get('termsAccepted')?.errors) {
+        <ion-note
+          color="danger"
+          class="error-message"
+        >
+          You must accept the terms and conditions
+        </ion-note>
+      }
 
       <!-- Register Button -->
       <ion-button
@@ -146,8 +159,12 @@
         [disabled]="registerForm.invalid || isLoading"
         class="register-button"
       >
-        <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
-        <span *ngIf="!isLoading">Create Account</span>
+        @if (isLoading) {
+          <ion-spinner name="crescent"></ion-spinner>
+        }
+        @if (!isLoading) {
+          <span>Create Account</span>
+        }
       </ion-button>
     </form>
 

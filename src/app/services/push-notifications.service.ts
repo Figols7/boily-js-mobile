@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import {
   PushNotifications,
@@ -9,6 +9,7 @@ import {
 } from '@capacitor/push-notifications';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { APP_CONFIG } from '../config/app.config.token';
 
 export interface NotificationPayload {
   title: string;
@@ -20,13 +21,14 @@ export interface NotificationPayload {
   providedIn: 'root'
 })
 export class PushNotificationsService {
-  private readonly API_URL = 'http://localhost:3000/api';
+  private config = inject(APP_CONFIG);
+  private platform = inject(Platform);
+  private http = inject(HttpClient);
+
+  private readonly API_URL = this.config.apiUrl;
   private deviceToken: string | null = null;
 
-  constructor(
-    private platform: Platform,
-    private http: HttpClient
-  ) {}
+  constructor() {}
 
   async initialize(): Promise<void> {
     if (!this.platform.is('capacitor')) {

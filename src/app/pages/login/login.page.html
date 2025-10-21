@@ -24,10 +24,16 @@
             inputmode="email">
           </ion-input>
         </ion-item>
-        <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-          <small *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</small>
-          <small *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email</small>
-        </div>
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+          <div class="error-message">
+            @if (loginForm.get('email')?.errors?.['required']) {
+              <small>Email is required</small>
+            }
+            @if (loginForm.get('email')?.errors?.['email']) {
+              <small>Please enter a valid email</small>
+            }
+          </div>
+        }
 
         <ion-item>
           <ion-label position="stacked">Password</ion-label>
@@ -45,10 +51,16 @@
             <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
           </ion-button>
         </ion-item>
-        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          <small *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</small>
-          <small *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</small>
-        </div>
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <div class="error-message">
+            @if (loginForm.get('password')?.errors?.['required']) {
+              <small>Password is required</small>
+            }
+            @if (loginForm.get('password')?.errors?.['minlength']) {
+              <small>Password must be at least 6 characters</small>
+            }
+          </div>
+        }
       </ion-list>
 
       <div class="form-actions">

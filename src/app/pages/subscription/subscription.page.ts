@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, LoadingController, AlertController } from '@ionic/angular';
 import { IapService, SubscriptionTier } from '../../services/iap.service';
@@ -13,17 +13,15 @@ import { Router } from '@angular/router';
   imports: [CommonModule, IonicModule]
 })
 export class SubscriptionPage implements OnInit {
+  private iapService = inject(IapService);
+  private authService = inject(AuthService);
+  private loadingCtrl = inject(LoadingController);
+  private alertCtrl = inject(AlertController);
+  private router = inject(Router);
+
   subscriptionTiers: SubscriptionTier[] = [];
   currentSubscription: any = null;
   isLoading = false;
-
-  constructor(
-    private iapService: IapService,
-    private authService: AuthService,
-    private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController,
-    private router: Router
-  ) {}
 
   async ngOnInit() {
     await this.loadSubscriptionData();
@@ -135,5 +133,13 @@ export class SubscriptionPage implements OnInit {
     if (feature.includes('análisis')) return 'analytics';
     if (feature.includes('soporte')) return 'headset';
     return 'checkmark-circle';
+  }
+
+  openTerms() {
+    window.open('https://your-domain.com/terms', '_system');
+  }
+
+  openPrivacy() {
+    window.open('https://your-domain.com/privacy', '_system');
   }
 }

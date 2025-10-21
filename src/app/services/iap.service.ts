@@ -1,10 +1,26 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { InAppPurchases, IAPProduct, PurchaseResult } from '@capacitor-community/in-app-purchases';
+// TODO: Install correct in-app purchases plugin
+// import { InAppPurchases, IAPProduct, PurchaseResult } from '@capacitor-community/in-app-purchases';
 import { AuthService } from './auth.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { APP_CONFIG } from '../config/app.config.token';
+
+// Temporary types until plugin is installed
+interface IAPProduct {
+  productId: string;
+  title: string;
+  description: string;
+  price: string;
+}
+
+interface PurchaseResult {
+  success?: boolean;
+  receipt?: string;
+  productId?: string;
+  transactionId?: string;
+}
 
 export interface SubscriptionTier {
   id: string;
@@ -19,6 +35,13 @@ export interface SubscriptionTier {
   providedIn: 'root'
 })
 export class IapService {
+  private config = inject(APP_CONFIG);
+  private http = inject(HttpClient);
+  private platform = inject(Platform);
+  private authService = inject(AuthService);
+
+  private readonly API_URL = this.config.apiUrl;
+
   private readonly PRODUCT_IDS = {
     PROFESSIONAL_MONTHLY: 'grantwatch_professional_monthly',
     PROFESSIONAL_YEARLY: 'grantwatch_professional_yearly',
@@ -55,11 +78,7 @@ export class IapService {
     }
   ];
 
-  constructor(
-    private platform: Platform,
-    private authService: AuthService,
-    private http: HttpClient
-  ) {}
+  constructor() {}
 
   async initialize(): Promise<void> {
     if (!this.platform.is('capacitor')) {
@@ -67,84 +86,74 @@ export class IapService {
       return;
     }
 
-    try {
-      // Initialize the IAP plugin
-      await InAppPurchases.initialize();
-
-      // Get available products
-      const products = await this.getProducts();
-      console.log('Available products:', products);
-
-      // Restore purchases for existing users
-      await this.restorePurchases();
-    } catch (error) {
-      console.error('Failed to initialize IAP:', error);
-    }
+    // TODO: Uncomment when in-app purchases plugin is installed
+    // try {
+    //   await InAppPurchases.initialize();
+    //   const products = await this.getProducts();
+    //   console.log('Available products:', products);
+    //   await this.restorePurchases();
+    // } catch (error) {
+    //   console.error('Failed to initialize IAP:', error);
+    // }
   }
 
   async getProducts(): Promise<IAPProduct[]> {
-    try {
-      const result = await InAppPurchases.getProducts({
-        productIds: Object.values(this.PRODUCT_IDS)
-      });
-      return result.products;
-    } catch (error) {
-      console.error('Failed to get products:', error);
-      return [];
-    }
+    // TODO: Uncomment when in-app purchases plugin is installed
+    // try {
+    //   const result = await InAppPurchases.getProducts({
+    //     productIds: Object.values(this.PRODUCT_IDS)
+    //   });
+    //   return result.products;
+    // } catch (error) {
+    //   console.error('Failed to get products:', error);
+    //   return [];
+    // }
+    return [];
   }
 
   async purchaseSubscription(productId: string): Promise<boolean> {
-    try {
-      const result = await InAppPurchases.purchaseProduct({
-        productId: productId
-      });
-
-      if (result.success) {
-        // Verify purchase with your backend
-        const verified = await this.verifyPurchaseWithBackend(result);
-
-        if (verified) {
-          // Update local user state
-          await this.authService.getCurrentUser().toPromise();
-          return true;
-        }
-      }
-
-      return false;
-    } catch (error) {
-      console.error('Purchase failed:', error);
-      throw error;
-    }
+    // TODO: Uncomment when in-app purchases plugin is installed
+    // try {
+    //   const result = await InAppPurchases.purchaseProduct({ productId });
+    //   if (result.success) {
+    //     const verified = await this.verifyPurchaseWithBackend(result);
+    //     if (verified) {
+    //       await this.authService.getCurrentUser().toPromise();
+    //       return true;
+    //     }
+    //   }
+    //   return false;
+    // } catch (error) {
+    //   console.error('Purchase failed:', error);
+    //   throw error;
+    // }
+    throw new Error('In-app purchases not yet configured');
   }
 
   async restorePurchases(): Promise<void> {
-    try {
-      const result = await InAppPurchases.restorePurchases();
-
-      if (result.purchases && result.purchases.length > 0) {
-        // Verify each restored purchase
-        for (const purchase of result.purchases) {
-          await this.verifyPurchaseWithBackend(purchase);
-        }
-
-        // Refresh user state
-        await this.authService.getCurrentUser().toPromise();
-      }
-    } catch (error) {
-      console.error('Failed to restore purchases:', error);
-    }
+    // TODO: Uncomment when in-app purchases plugin is installed
+    // try {
+    //   const result = await InAppPurchases.restorePurchases();
+    //   if (result.purchases && result.purchases.length > 0) {
+    //     for (const purchase of result.purchases) {
+    //       await this.verifyPurchaseWithBackend(purchase);
+    //     }
+    //     await this.authService.getCurrentUser().toPromise();
+    //   }
+    // } catch (error) {
+    //   console.error('Failed to restore purchases:', error);
+    // }
   }
 
   private async verifyPurchaseWithBackend(purchase: PurchaseResult): Promise<boolean> {
     try {
-      const response = await this.http.post<any>(`${environment.apiUrl}/api/subscriptions/verify-apple`, {
+      const response = await this.http.post<any>(`${this.API_URL}/subscriptions/verify-apple`, {
         receipt: purchase.receipt,
         productId: purchase.productId,
         transactionId: purchase.transactionId
       }).toPromise();
 
-      return response.success;
+      return response?.success || false;
     } catch (error) {
       console.error('Failed to verify purchase with backend:', error);
       return false;

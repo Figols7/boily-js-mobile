@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, of, from } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { Platform } from '@ionic/angular';
 import { SignInWithApple, SignInWithAppleResponse, SignInWithAppleOptions } from '@capacitor-community/apple-sign-in';
+import { APP_CONFIG } from '../config/app.config.token';
 import {
   User,
   AuthResponse,
@@ -20,7 +21,13 @@ import {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:3000/api';
+  private config = inject(APP_CONFIG);
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private storage = inject(Storage);
+  private platform = inject(Platform);
+
+  private readonly API_URL = this.config.apiUrl;
   private readonly TOKEN_KEY = 'accessToken';
   private readonly REFRESH_TOKEN_KEY = 'refreshToken';
   private readonly USER_KEY = 'user';
@@ -38,12 +45,7 @@ export class AuthService {
     return user ? user.fullName || `${user.firstName} ${user.lastName}`.trim() : '';
   });
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private storage: Storage,
-    private platform: Platform
-  ) {
+  constructor() {
     this.init();
   }
 
@@ -56,9 +58,20 @@ export class AuthService {
 
   private async initializeAuth(): Promise<void> {
     const token = await this.getToken();
+    const refreshToken = await this.getRefreshToken();
     const user = await this.getStoredUser();
 
     if (token && user) {
+      // Sync tokens to localStorage for HTTP interceptor
+      try {
+        localStorage.setItem(this.TOKEN_KEY, token);
+        if (refreshToken) {
+          localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+        }
+      } catch (e) {
+        console.error('Failed to sync tokens to localStorage', e);
+      }
+
       this.currentUserSignal.set(user);
       this.isAuthenticatedSignal.set(true);
     }
@@ -232,8 +245,17 @@ export class AuthService {
 
   private async setTokens(accessToken: string, refreshToken: string): Promise<void> {
     if (!this._storage) return;
+    // Save to Ionic Storage for persistence
     await this._storage.set(this.TOKEN_KEY, accessToken);
     await this._storage.set(this.REFRESH_TOKEN_KEY, refreshToken);
+
+    // Also save to localStorage for sync access in HTTP interceptor
+    try {
+      localStorage.setItem(this.TOKEN_KEY, accessToken);
+      localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+    } catch (e) {
+      console.error('Failed to save tokens to localStorage', e);
+    }
   }
 
   private async setAuthData(authResponse: AuthResponse): Promise<void> {
@@ -249,6 +271,15 @@ export class AuthService {
       await this._storage.remove(this.REFRESH_TOKEN_KEY);
       await this._storage.remove(this.USER_KEY);
     }
+
+    // Also clear from localStorage
+    try {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    } catch (e) {
+      console.error('Failed to clear tokens from localStorage', e);
+    }
+
     this.currentUserSignal.set(null);
     this.isAuthenticatedSignal.set(false);
     this.router.navigate(['/']);

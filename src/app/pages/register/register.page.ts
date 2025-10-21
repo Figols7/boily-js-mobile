@@ -1,9 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonicModule, LoadingController, AlertController, Platform } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
+
+interface RegisterForm {
+  email: FormControl<string>;
+  password: FormControl<string>;
+  confirmPassword: FormControl<string>;
+  firstName: FormControl<string>;
+  lastName: FormControl<string>;
+  termsAccepted: FormControl<boolean>;
+}
 
 @Component({
   selector: 'app-register',
@@ -13,27 +22,27 @@ import { AuthService } from '../../services/auth.service';
   imports: [CommonModule, IonicModule, ReactiveFormsModule]
 })
 export class RegisterPage implements OnInit {
-  registerForm: FormGroup;
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private loadingCtrl = inject(LoadingController);
+  private alertCtrl = inject(AlertController);
+  private platform = inject(Platform);
+
+  registerForm: FormGroup<RegisterForm>;
   showPassword = false;
   showConfirmPassword = false;
   isLoading = false;
   passwordStrength = 0;
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController,
-    private platform: Platform
-  ) {
-    this.registerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]],
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      termsAccepted: [false, [Validators.requiredTrue]]
+  constructor() {
+    this.registerForm = this.fb.group<RegisterForm>({
+      email: new FormControl('', { validators: [Validators.required, Validators.email], nonNullable: true }),
+      password: new FormControl('', { validators: [Validators.required, Validators.minLength(6)], nonNullable: true }),
+      confirmPassword: new FormControl('', { validators: [Validators.required], nonNullable: true }),
+      firstName: new FormControl('', { validators: [Validators.required, Validators.minLength(2)], nonNullable: true }),
+      lastName: new FormControl('', { validators: [Validators.required, Validators.minLength(2)], nonNullable: true }),
+      termsAccepted: new FormControl(false, { validators: [Validators.requiredTrue], nonNullable: true })
     }, { validators: this.passwordMatchValidator });
 
     // Watch password changes for strength meter
@@ -61,9 +70,9 @@ export class RegisterPage implements OnInit {
     });
     await loading.present();
 
-    const { confirmPassword, termsAccepted, ...registerData } = this.registerForm.value;
+    const { confirmPassword, termsAccepted, ...registerData } = this.registerForm.getRawValue();
 
-    this.authService.register(registerData).subscribe({
+    this.authService.register(registerData as any).subscribe({
       next: async (response) => {
         await loading.dismiss();
 
@@ -154,7 +163,7 @@ export class RegisterPage implements OnInit {
   }
 
   // Custom validator for password match
-  private passwordMatchValidator(form: FormGroup) {
+  private passwordMatchValidator(form: any) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
 
