@@ -9,7 +9,8 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <!-- Current subscription status -->
-  <div class="subscription-status" *ngIf="currentSubscription">
+  @if (currentSubscription) {
+  <div class="subscription-status">
     <ion-card color="success">
       <ion-card-header>
         <ion-card-title>
@@ -32,9 +33,11 @@
       </ion-card-content>
     </ion-card>
   </div>
+  }
 
   <!-- Free user - Show upgrade options -->
-  <div class="upgrade-section" *ngIf="!currentSubscription">
+  @if (!currentSubscription) {
+  <div class="upgrade-section">
     <div class="upgrade-header">
       <ion-icon name="star" color="warning" size="large"></ion-icon>
       <h2>Actualiza a Premium</h2>
@@ -43,17 +46,18 @@
 
     <!-- Subscription tiers -->
     <div class="subscription-tiers">
+      @for (tier of subscriptionTiers; track tier.id) {
       <ion-card
-        *ngFor="let tier of subscriptionTiers"
         class="tier-card"
         [class.recommended]="tier.id.includes('yearly')">
 
-        <ion-badge
-          color="secondary"
-          class="recommended-badge"
-          *ngIf="tier.id.includes('yearly')">
-          ¡Más Popular!
-        </ion-badge>
+        @if (tier.id.includes('yearly')) {
+          <ion-badge
+            color="secondary"
+            class="recommended-badge">
+            ¡Más Popular!
+          </ion-badge>
+        }
 
         <ion-card-header>
           <ion-card-title>{{tier.name}}</ion-card-title>
@@ -65,14 +69,16 @@
 
         <ion-card-content>
           <ion-list lines="none">
-            <ion-item *ngFor="let feature of tier.features">
-              <ion-icon
-                [name]="getFeatureIcon(feature)"
-                color="success"
-                slot="start">
-              </ion-icon>
-              <ion-label>{{feature}}</ion-label>
-            </ion-item>
+            @for (feature of tier.features; track feature) {
+              <ion-item>
+                <ion-icon
+                  [name]="getFeatureIcon(feature)"
+                  color="success"
+                  slot="start">
+                </ion-icon>
+                <ion-label>{{feature}}</ion-label>
+              </ion-item>
+            }
           </ion-list>
 
           <ion-button
@@ -84,8 +90,10 @@
           </ion-button>
         </ion-card-content>
       </ion-card>
+      }
     </div>
   </div>
+  }
 
   <!-- Restore purchases button -->
   <div class="restore-section">

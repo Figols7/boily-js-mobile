@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, of, from } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
@@ -20,6 +20,11 @@ import {
   providedIn: 'root'
 })
 export class AuthService {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private storage = inject(Storage);
+  private platform = inject(Platform);
+
   private readonly API_URL = 'http://localhost:3000/api';
   private readonly TOKEN_KEY = 'accessToken';
   private readonly REFRESH_TOKEN_KEY = 'refreshToken';
@@ -38,12 +43,7 @@ export class AuthService {
     return user ? user.fullName || `${user.firstName} ${user.lastName}`.trim() : '';
   });
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private storage: Storage,
-    private platform: Platform
-  ) {
+  constructor() {
     this.init();
   }
 

@@ -22,7 +22,8 @@
     </div>
 
     <!-- Subscription Status Card -->
-    <ion-card class="subscription-card" *ngIf="subscription() as sub">
+    @if (subscription(); as sub) {
+    <ion-card class="subscription-card">
       <ion-card-header>
         <div class="card-header-content">
           <ion-card-title>
@@ -38,76 +39,87 @@
 
       <ion-card-content>
         <!-- Trial Info -->
-        <div class="info-row" *ngIf="isTrial()">
-          <ion-icon name="time-outline" color="primary"></ion-icon>
-          <div class="info-content">
-            <span class="info-label">Trial Period</span>
-            <span class="info-value">{{ getDaysRemaining() }} days remaining</span>
+        @if (isTrial()) {
+          <div class="info-row">
+            <ion-icon name="time-outline" color="primary"></ion-icon>
+            <div class="info-content">
+              <span class="info-label">Trial Period</span>
+              <span class="info-value">{{ getDaysRemaining() }} days remaining</span>
+            </div>
           </div>
-        </div>
+        }
 
         <!-- Billing Period -->
-        <div class="info-row" *ngIf="isActive()">
-          <ion-icon name="calendar-outline" color="primary"></ion-icon>
-          <div class="info-content">
-            <span class="info-label">Current Period</span>
-            <span class="info-value">
-              {{ formatDate(sub.currentPeriodStart) }} - {{ formatDate(sub.currentPeriodEnd) }}
-            </span>
+        @if (isActive()) {
+          <div class="info-row">
+            <ion-icon name="calendar-outline" color="primary"></ion-icon>
+            <div class="info-content">
+              <span class="info-label">Current Period</span>
+              <span class="info-value">
+                {{ formatDate(sub.currentPeriodStart) }} - {{ formatDate(sub.currentPeriodEnd) }}
+              </span>
+            </div>
           </div>
-        </div>
+        }
 
         <!-- Price -->
-        <div class="info-row" *ngIf="sub.planType !== PlanType.STARTER">
-          <ion-icon name="card-outline" color="primary"></ion-icon>
-          <div class="info-content">
-            <span class="info-label">{{ sub.isYearly ? 'Yearly' : 'Monthly' }} Cost</span>
-            <span class="info-value">
-              {{ formatCurrency(sub.isYearly ? sub.yearlyPrice * 100 : sub.monthlyPrice * 100) }}
-            </span>
+        @if (sub.planType !== PlanType.STARTER) {
+          <div class="info-row">
+            <ion-icon name="card-outline" color="primary"></ion-icon>
+            <div class="info-content">
+              <span class="info-label">{{ sub.isYearly ? 'Yearly' : 'Monthly' }} Cost</span>
+              <span class="info-value">
+                {{ formatCurrency(sub.isYearly ? sub.yearlyPrice * 100 : sub.monthlyPrice * 100) }}
+              </span>
+            </div>
           </div>
-        </div>
+        }
 
         <!-- Action Buttons -->
         <div class="button-group">
-          <ion-button
-            expand="block"
-            fill="outline"
-            size="small"
-            (click)="navigateToPricing()"
-            *ngIf="sub.planType === PlanType.STARTER"
-          >
-            <ion-icon name="rocket-outline" slot="start"></ion-icon>
-            Upgrade Plan
-          </ion-button>
+          @if (sub.planType === PlanType.STARTER) {
+            <ion-button
+              expand="block"
+              fill="outline"
+              size="small"
+              (click)="navigateToPricing()"
+            >
+              <ion-icon name="rocket-outline" slot="start"></ion-icon>
+              Upgrade Plan
+            </ion-button>
+          }
 
-          <ion-button
-            expand="block"
-            fill="outline"
-            size="small"
-            (click)="manageBilling()"
-            *ngIf="sub.planType !== PlanType.STARTER"
-          >
-            <ion-icon name="card-outline" slot="start"></ion-icon>
-            Manage Billing
-          </ion-button>
+          @if (sub.planType !== PlanType.STARTER) {
+            <ion-button
+              expand="block"
+              fill="outline"
+              size="small"
+              (click)="manageBilling()"
+            >
+              <ion-icon name="card-outline" slot="start"></ion-icon>
+              Manage Billing
+            </ion-button>
+          }
 
-          <ion-button
-            expand="block"
-            fill="clear"
-            size="small"
-            color="danger"
-            (click)="cancelSubscription()"
-            *ngIf="isActive() && sub.planType !== PlanType.STARTER"
-          >
-            Cancel Subscription
-          </ion-button>
+          @if (isActive() && sub.planType !== PlanType.STARTER) {
+            <ion-button
+              expand="block"
+              fill="clear"
+              size="small"
+              color="danger"
+              (click)="cancelSubscription()"
+            >
+              Cancel Subscription
+            </ion-button>
+          }
         </div>
       </ion-card-content>
     </ion-card>
+    }
 
     <!-- API Usage Card -->
-    <ion-card class="usage-card" *ngIf="subscription() as sub">
+    @if (subscription(); as sub) {
+    <ion-card class="usage-card">
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="analytics-outline"></ion-icon>
@@ -136,20 +148,26 @@
           </div>
         </div>
 
-        <ion-chip color="warning" *ngIf="isApproachingLimit()">
-          <ion-icon name="warning-outline"></ion-icon>
-          <ion-label>Approaching Limit</ion-label>
-        </ion-chip>
+        @if (isApproachingLimit()) {
+          <ion-chip color="warning">
+            <ion-icon name="warning-outline"></ion-icon>
+            <ion-label>Approaching Limit</ion-label>
+          </ion-chip>
+        }
 
-        <ion-chip color="danger" *ngIf="subscriptionService.isApiLimitReached()">
-          <ion-icon name="ban-outline"></ion-icon>
-          <ion-label>Limit Reached</ion-label>
-        </ion-chip>
+        @if (subscriptionService.isApiLimitReached()) {
+          <ion-chip color="danger">
+            <ion-icon name="ban-outline"></ion-icon>
+            <ion-label>Limit Reached</ion-label>
+          </ion-chip>
+        }
       </ion-card-content>
     </ion-card>
+    }
 
     <!-- Usage Stats Card -->
-    <ion-card *ngIf="usageStats">
+    @if (usageStats) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="stats-chart-outline"></ion-icon>
@@ -179,9 +197,11 @@
         </ion-list>
       </ion-card-content>
     </ion-card>
+    }
 
     <!-- Recent Billing History -->
-    <ion-card *ngIf="billingHistory && billingHistory.length > 0">
+    @if (billingHistory && billingHistory.length > 0) {
+    <ion-card>
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="receipt-outline"></ion-icon>
@@ -191,20 +211,22 @@
 
       <ion-card-content>
         <ion-list lines="inset">
-          <ion-item *ngFor="let invoice of billingHistory.slice(0, 5)">
-            <ion-icon
-              [name]="invoice.status === 'paid' ? 'checkmark-circle' : 'alert-circle'"
-              [color]="invoice.status === 'paid' ? 'success' : 'warning'"
-              slot="start"
-            ></ion-icon>
-            <ion-label>
-              <h3>{{ invoice.number || 'Invoice' }}</h3>
-              <p>{{ formatDate(invoice.created) }}</p>
-            </ion-label>
-            <ion-text slot="end" class="invoice-amount">
-              {{ formatCurrency(invoice.amount) }}
-            </ion-text>
-          </ion-item>
+          @for (invoice of billingHistory.slice(0, 5); track invoice.id || invoice.number) {
+            <ion-item>
+              <ion-icon
+                [name]="invoice.status === 'paid' ? 'checkmark-circle' : 'alert-circle'"
+                [color]="invoice.status === 'paid' ? 'success' : 'warning'"
+                slot="start"
+              ></ion-icon>
+              <ion-label>
+                <h3>{{ invoice.number || 'Invoice' }}</h3>
+                <p>{{ formatDate(invoice.created) }}</p>
+              </ion-label>
+              <ion-text slot="end" class="invoice-amount">
+                {{ formatCurrency(invoice.amount) }}
+              </ion-text>
+            </ion-item>
+          }
         </ion-list>
 
         <ion-button
@@ -217,6 +239,7 @@
         </ion-button>
       </ion-card-content>
     </ion-card>
+    }
 
     <!-- Quick Actions -->
     <div class="quick-actions">
@@ -246,9 +269,11 @@
     </div>
 
     <!-- Loading State -->
-    <div class="loading-container" *ngIf="isLoading">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Loading dashboard...</p>
-    </div>
+    @if (isLoading) {
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Loading dashboard...</p>
+      </div>
+    }
   </div>
 </ion-content>
