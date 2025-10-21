@@ -1,9 +1,10 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import { Network } from '@capacitor/network';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from, of } from 'rxjs';
 import { switchMap, map, catchError, tap } from 'rxjs/operators';
+import { APP_CONFIG } from '../config/app.config.token';
 
 export interface PendingAction {
   id: string;
@@ -25,7 +26,11 @@ export interface CachedData {
   providedIn: 'root'
 })
 export class OfflineSyncService {
-  private readonly API_URL = 'http://localhost:3000/api';
+  private config = inject(APP_CONFIG);
+  private storage = inject(Storage);
+  private http = inject(HttpClient);
+
+  private readonly API_URL = this.config.apiUrl;
   private readonly PENDING_ACTIONS_KEY = 'pending_actions';
   private readonly CACHE_PREFIX = 'cache_';
   private _storage: Storage | null = null;
@@ -42,10 +47,7 @@ export class OfflineSyncService {
   private pendingActionsCountSignal = signal<number>(0);
   public pendingActionsCount = this.pendingActionsCountSignal.asReadonly();
 
-  constructor(
-    private storage: Storage,
-    private http: HttpClient
-  ) {
+  constructor() {
     this.init();
   }
 

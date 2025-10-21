@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { Platform } from '@ionic/angular';
 import { SignInWithApple, SignInWithAppleResponse, SignInWithAppleOptions } from '@capacitor-community/apple-sign-in';
+import { APP_CONFIG } from '../config/app.config.token';
 import {
   User,
   AuthResponse,
@@ -20,12 +21,13 @@ import {
   providedIn: 'root'
 })
 export class AuthService {
+  private config = inject(APP_CONFIG);
   private http = inject(HttpClient);
   private router = inject(Router);
   private storage = inject(Storage);
   private platform = inject(Platform);
 
-  private readonly API_URL = 'http://localhost:3000/api';
+  private readonly API_URL = this.config.apiUrl;
   private readonly TOKEN_KEY = 'accessToken';
   private readonly REFRESH_TOKEN_KEY = 'refreshToken';
   private readonly USER_KEY = 'user';

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 import { map, tap, switchMap } from 'rxjs/operators';
 import { Storage } from '@ionic/storage-angular';
+import { APP_CONFIG } from '../config/app.config.token';
 import { Subscription, PlanType, SubscriptionStatus } from '../models/user.model';
 
 interface SubscriptionPlan {
@@ -42,10 +43,11 @@ interface UsageStats {
   providedIn: 'root'
 })
 export class SubscriptionService {
+  private config = inject(APP_CONFIG);
   private http = inject(HttpClient);
   private storage = inject(Storage);
 
-  private readonly API_URL = 'http://localhost:3000/api';
+  private readonly API_URL = this.config.apiUrl;
   private readonly SUBSCRIPTION_KEY = 'subscription';
   private _storage: Storage | null = null;
 

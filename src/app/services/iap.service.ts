@@ -5,6 +5,7 @@ import { Platform } from '@ionic/angular';
 import { AuthService } from './auth.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
+import { APP_CONFIG } from '../config/app.config.token';
 
 // Temporary types until plugin is installed
 interface IAPProduct {
@@ -34,6 +35,13 @@ export interface SubscriptionTier {
   providedIn: 'root'
 })
 export class IapService {
+  private config = inject(APP_CONFIG);
+  private http = inject(HttpClient);
+  private platform = inject(Platform);
+  private authService = inject(AuthService);
+
+  private readonly API_URL = this.config.apiUrl;
+
   private readonly PRODUCT_IDS = {
     PROFESSIONAL_MONTHLY: 'grantwatch_professional_monthly',
     PROFESSIONAL_YEARLY: 'grantwatch_professional_yearly',
@@ -69,10 +77,6 @@ export class IapService {
       productId: this.PRODUCT_IDS.PROFESSIONAL_YEARLY
     }
   ];
-
-  private http = inject(HttpClient);
-  private platform = inject(Platform);
-  private authService = inject(AuthService);
 
   constructor() {}
 
@@ -143,7 +147,7 @@ export class IapService {
 
   private async verifyPurchaseWithBackend(purchase: PurchaseResult): Promise<boolean> {
     try {
-      const response = await this.http.post<any>(`http://localhost:3000/api/subscriptions/verify-apple`, {
+      const response = await this.http.post<any>(`${this.API_URL}/subscriptions/verify-apple`, {
         receipt: purchase.receipt,
         productId: purchase.productId,
         transactionId: purchase.transactionId
